@@ -123,7 +123,7 @@ public class BSearchTree<E extends Comparable<E>> {
 				return this.root;
 			}
 			else if(root.getLeft() != null && root.getRight() != null){
-				BSTNode<E> newRoot = remove(value,this.root,null);
+				BSTNode<E> newRoot = remove(value,this.root.getRight().getLeft(),this.root.getRight());
 				newRoot.setLeft(this.root.getLeft());
 				newRoot.setRight(this.root.getRight());
 				this.root = newRoot;
@@ -138,30 +138,87 @@ public class BSearchTree<E extends Comparable<E>> {
 				return this.root;
 			}
 		}
+		// if val is less than the root
 		else if(this.root.getData().compareTo(value) < 0) {
-			
+			traverse(value, this.root.getLeft(),this.root);
 		}
+		else {
+			traverse(value,this.root.getRight(),this.root);
+		}
+		return this.root;
 	}
 	
-	private BSTNode<E> traverse(BSTNode<E> node){
-		
+	private void traverse(E value, BSTNode<E> node, BSTNode<E> previousNode){
+		if(node.getData() == value) {
+			if(node.getLeft() == null && node.getRight()== null) {
+				if(previousNode.getLeft()== node) {
+					previousNode.setLeft(null);
+				}
+				if(previousNode.getRight()== node) {
+					previousNode.setRight(null);
+				}
+			}
+			else if(node.getLeft() != null && node.getRight() != null) {
+				BSTNode<E> newRoot = remove(value,node.getRight().getLeft(),node.getRight());
+				newRoot.setLeft(node.getLeft());
+				newRoot.setRight(node.getRight());
+				if(previousNode.getLeft()== node) {
+					previousNode.setLeft(newRoot);
+				}
+				if(previousNode.getRight()== node) {
+					previousNode.setRight(newRoot);
+				}
+			}
+			else {
+				if(node.getLeft()==null) {
+					if(previousNode.getLeft()== node) {
+						previousNode.setLeft(node.getRight());
+					}
+					if(previousNode.getRight()== node) {
+						previousNode.setRight(node.getRight());
+					}
+				}
+				else {
+					if(previousNode.getLeft()== node) {
+						previousNode.setLeft(node.getLeft());
+					}
+					if(previousNode.getRight()== node) {
+						previousNode.setRight(node.getLeft());
+					}
+				}
+			}
+		}
+		else if(value.compareTo(node.getData()) < 0) {
+			traverse(value,node.getLeft(),node);
+		}
+		else {
+			traverse(value,node.getRight(),node);
+		}
 	}
 	// returns node that points to the node we want to remove
 	private BSTNode<E> remove(E value, BSTNode<E> currentNode, BSTNode<E> previousNode){
 		if(currentNode == null) {
 			return previousNode;
 			}
+		
+		// if there is no left child
 		if(currentNode.getLeft() == null) {
+			// if there is a right child then set the 
+			// right child to be the left child
 			if(currentNode.getRight() != null) {
 				previousNode.setLeft(currentNode.getRight());
 				return currentNode;
 			}
+			// otherwise if there is no right child then set left
+			// to be null
 			else {
 				previousNode.setLeft(null);
 				return currentNode;
 			}
 		}
+		// if there is a left node then recurse on that node 
 		else {
+			
 			return remove(value,currentNode.getLeft(),currentNode);
 		}
 	}
