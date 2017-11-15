@@ -36,7 +36,8 @@ public class BSearchTree<E extends Comparable<E>> {
 		for (E v : arr)
 			add(v);
 	}
-
+	
+	
 	/**
 	 * BST insert method
 	 *
@@ -46,8 +47,36 @@ public class BSearchTree<E extends Comparable<E>> {
 	 *            the inserted value, allow duplicate values.
 	 */
 	public void add(E value) {
-		// TODO Implement this method using recursion
+		
+		// if the root is null, then value is the new root
+		if(this.root == null) {
+			this.root = new BSTNode<E>(value,null,null); 
+		}
+		else {
+			add(this.root,value);
+		}
 	}
+	
+	private void add(BSTNode<E> currentRoot, E value) {
+		//if(currentRoot == null) {}
+		if(value.compareTo(currentRoot.getData()) < 0) {
+			if(currentRoot.getLeft() == null) {
+				currentRoot.setLeft(new BSTNode<E>(value,null,null));
+			}
+			else {
+				add(currentRoot.getLeft(),value);
+			}
+		}
+		else {
+			if(currentRoot.getRight() == null) {
+				currentRoot.setRight(new BSTNode<E>(value,null,null));
+			}
+			else {
+				add(currentRoot.getRight(),value);
+			}
+		}
+	}
+	
 
 	/**
 	 * Find method in BST
@@ -59,8 +88,24 @@ public class BSearchTree<E extends Comparable<E>> {
 	 * @return true if the value is found in the BST
 	 */
 	public boolean find(E value) {
-		// TODO implement this method using recursion
-		return false;
+
+		return find(this.root,value);
+	}
+	
+	private boolean find(BSTNode<E> currentRoot, E value) {
+		
+		if(currentRoot.getData().equals(value)) {
+			return true;
+		}
+		else if(value.compareTo(currentRoot.getData()) < 0){
+			if(currentRoot.getLeft() == null) {return false;}
+			return find(currentRoot.getLeft(),value);
+		}
+		else {
+			if(currentRoot.getRight()== null) {return false;}
+			return find(currentRoot.getRight(),value);
+		}
+		
 	}
 
 	/**
@@ -72,8 +117,53 @@ public class BSearchTree<E extends Comparable<E>> {
 	 * @return tree root
 	 */
 	public BSTNode<E> remove(E value) {
-		// TODO implement this method using iteration
-		return root;
+		if(this.root.getData() == value) {
+			if(root.getLeft() == null && root.getRight()== null) {
+				this.root = null;
+				return this.root;
+			}
+			else if(root.getLeft() != null && root.getRight() != null){
+				BSTNode<E> newRoot = remove(value,this.root,null);
+				newRoot.setLeft(this.root.getLeft());
+				newRoot.setRight(this.root.getRight());
+				this.root = newRoot;
+				return this.root;
+			}
+			else if(root.getLeft() == null) {
+				this.root = this.root.getRight();
+				return this.root;
+			}
+			else {
+				this.root = this.root.getLeft();
+				return this.root;
+			}
+		}
+		else if(this.root.getData().compareTo(value) < 0) {
+			
+		}
+	}
+	
+	private BSTNode<E> traverse(BSTNode<E> node){
+		
+	}
+	// returns node that points to the node we want to remove
+	private BSTNode<E> remove(E value, BSTNode<E> currentNode, BSTNode<E> previousNode){
+		if(currentNode == null) {
+			return previousNode;
+			}
+		if(currentNode.getLeft() == null) {
+			if(currentNode.getRight() != null) {
+				previousNode.setLeft(currentNode.getRight());
+				return currentNode;
+			}
+			else {
+				previousNode.setLeft(null);
+				return currentNode;
+			}
+		}
+		else {
+			return remove(value,currentNode.getLeft(),currentNode);
+		}
 	}
 
 	public BSTNode<E> getRoot() {
